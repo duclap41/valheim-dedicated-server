@@ -5,10 +5,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt install software-properties-common -y && \
+    apt-get install -y software-properties-common && \
     dpkg --add-architecture i386 && \
-    apt install lib32gcc-s1 && \
-    apt-get update
+    apt-get update && \
+    apt-get install -y lib32gcc-s1 libc6-i386
 
 # Set timezone and locale
 RUN ln -fs /usr/share/zoneinfo/Asia/Ho_Chi_Minh /etc/localtime && \
