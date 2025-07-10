@@ -3,11 +3,12 @@ FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt install software-properties-common -y && \
-    dpkg --add-architecture i386 && \
+RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get update && \
-    apt install lib32gcc-s1
+    apt install software-properties-common -y && \
+    dpkg --add-architecture i386 && \
+    apt install lib32gcc-s1 && \
+    apt-get update
 
 # Set timezone and locale
 RUN ln -fs /usr/share/zoneinfo/Asia/Ho_Chi_Minh /etc/localtime && \
