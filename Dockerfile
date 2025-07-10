@@ -8,15 +8,16 @@ RUN apt-get update && \
     apt-get install -y software-properties-common && \
     dpkg --add-architecture i386 && \
     apt-get update && \
-    apt-get install -y lib32gcc-s1 libc6-i386
+    apt-get install -y lib32gcc-s1 libc6-i386 && \
+    apt-get install -y wget tar
 
 # Set timezone and locale
-RUN ln -fs /usr/share/zoneinfo/Asia/Ho_Chi_Minh /etc/localtime && \
-    dpkg-reconfigure -f noninteractive tzdata && \
-    locale-gen en_US.UTF-8
-ENV LANG en_US.UTF-8  
-ENV LANGUAGE en_US:en  
-ENV LC_ALL en_US.UTF-8
+# RUN ln -fs /usr/share/zoneinfo/Asia/Ho_Chi_Minh /etc/localtime && \
+#     dpkg-reconfigure -f noninteractive tzdata && \
+#     locale-gen en_US.UTF-8
+# ENV LANG en_US.UTF-8  
+# ENV LANGUAGE en_US:en  
+# ENV LC_ALL en_US.UTF-8
 
 # Install SteamCMD
 RUN mkdir -p /steamcmd && \
