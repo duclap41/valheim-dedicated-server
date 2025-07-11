@@ -36,5 +36,5 @@ WORKDIR /valheim
 EXPOSE 2456/udp 2457/udp 2458/udp
 
 # valheim entrypoint
-CMD ["/valheim/valheim_server.x86_64", "-name", "MyServer", "-port", "2456", "-world", "CurrentWorld", "-password", "pass123", "-public", "1"]
+# CMD ["/valheim/valheim_server.x86_64", "-name", "MyServer", "-port", "2456", "-world", "CurrentWorld", "-password", "pass123", "-public", "1"]
 CMD ["/bin/bash"]
