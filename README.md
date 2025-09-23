@@ -1,28 +1,80 @@
-# This is repo create and run dedicated server Valheim on Ubuntu with Docker
-> Note: This guide assumes that Docker and Docker Compose are already installed on your system. If you're unfamiliar with them, please refer to their official documentation or search online for installation instructions.
+# This is repo create and run dedicated server Valheim on Ubuntu
 
-## 1. [Optional] Copy folder that contain your file world save, then paste to this repo :
-* Window: `C:\Users\<UserName>\AppData\LocalLow\IronGate\Valheim\worlds_local`
-* Linux: `~/.config/unity3d/IronGate/Valheim/worlds_local`
+## 1. Set up environment on Ubuntu:
+Install Steam and Packages
+``` sh
+sudo add-apt-repository multiverse
+sudo apt install software-properties-common
+sudo dpkg --add-architecture i386
+sudo apt update
+sudo apt install lib32gcc-s1 steamcmd
+sudo apt-get install libpulse-dev libatomic1 libc6
+```
+Must successfully install all, unless server not run.
 
-> (It should exist only 1 world, if not copy all file contain "your_world_name" to new `worlds_local` folder)
+## 2. Create new user:
+``` sh
+sudo adduser valheim
+```
+Type password then press Enter to skip user information, type 'y' at last.
+``` sh
+su - valheim
+``` 
 
-## 2. Modify `Dockerfile`:
-* At the line after "# valheim entrypoint", edit parameter:
-> "-name", "YourServerName" \
-> "-world", "YourCurrentWorldName" \
-> "-password", "YourPassword"
-* For instance, if your the file world save that name "FirstWorld", and you want passworld is "hello123":
-> "-name", "UbuntuHost" \
-> "-world", "FirstWorld" \
-> "-password", "hello123"
+## 3. Copy 'saves/manual-server/' folder to '/home/valheim/
+Should use 'scp -r'
 
-## 3. Run docker-compose:
-Use terminal and run `docker compose up -d`.
-> run `docker compose logs` if want to check logs
+## 4. Run SteamCMD and Install Valheim Server:
+``` ssh
+steamcmd
+```
+Wait for steam update
+``` steamcmd
+login anonymous
+app_update 896660 validate
+```
+Wait for Valheim Server Installing
+``` steamcmd
+exit
+```
 
-## 4. Check server IP:
-Run `hostname -I`, result example: 192.168.1.100. Remember this string.
+## 5. Set Server Parameters:
+Copy my example configs to server location:
+``` sh
+cp saves/ae9g_server.sh /home/valheim/Steam/steamapps/common/Valheim\ dedicated\ server/
+```
+Use Nano or Vim at ae9g_server.sh to change configs, read 'Valheim Dedicated Server Manual.pdf' in this path to comprehend parameters. (You can change for personal world)
 
-## 5. Join game from your local pc:
-Start game, choose join server, fill server ip `192.168.1.100:2456` and your password which you just created.
+## 6. Run Server with Tmux:
+``` sh
+tmux new -s vhserver
+cd /home/valheim/Steam/steamapps/common/Valheim\ dedicated\ server/
+./ae9g_server.sh
+```
+Press 'Ctrl' + 'B' + 'D' to exit tmux but it don't terminate the server.
+
+Hold a minutes, your server will start. You can read logs at '/home/valheim/manual-server/logs/server.logs'.
+
+Use can attach the session by 'tmux attach -t vhserver' then press 'Ctrl' + 'C' to stop server.
+
+## 7. Join Server from Game client:
+Find your server ip address, it will have `ip:2456` format, which 'ip' is your internet public ip (Ex:102.72.96.58:2456).
+``` sh
+curl https://ifconfig.me
+```
+It will print your public internet ip.
+
+Choose 'Add Server' after click 'Start' on client game, then paste your server address.
+
+> If your network is not public (open NAT). It depend on your Network Router, type 'how to allow NAT' + your Router Name to find solution.
+
+## 8. Use firewall for security:
+``` sh
+su - root
+ufw enable
+ufw allow 22
+ufw allow 2456:2458/udp
+```
+Port 22 is allow you keep using SSH.
+
+2456:2458 is 3 ports which your game runs on.
